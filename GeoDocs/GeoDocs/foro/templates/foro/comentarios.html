@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+{% load static %}
+{% load static notifications_tags %}
+<html lang="es">
+  <head>
+    <title> Bienvenido Foro </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="shortcut icon" href="{% static 'img\tituloimg.png'  %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui.js' %}"></script>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/global.css'  %}"/>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- icono cana -->
+    <script src="{% static 'js/simplemde.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/simplemde.min.css' %}">
+  </head>
+  <style media="screen">
+      a.fa.fa-eye.no-disable{
+            display: none;
+
+      }
+      a.fa.fa-columns.no-disable.no-mobile{
+            display: none;
+
+      }
+      a.fa.fa-arrows-alt.no-disable.no-mobile{
+            display: none;
+
+      }
+      a.fa.fa-quote-left{
+            display: none;
+
+      }
+      a.fa.fa-question-circle
+      {
+            display: none;
+
+      }
+
+    .pagination {
+        display: inline-block;
+        margin: 0px 0;
+    }
+
+    .pagination a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color .3s;
+        border: 1px solid #ddd;
+    }
+
+    .pagination a.active {
+        background-color: #4CAF50;
+        color: white;
+        border: 1px solid #4CAF50;
+    }
+
+    .pagination a:hover:not(.active) {background-color: #ddd;}
+    .avatar {
+        vertical-align: middle;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+
+      }
+      #contendor1{
+        height:auto;
+        z-index: -1;
+      }
+      #hola {
+      padding: 5px;
+      text-align: -webkit-center;
+      }
+      .btn-default {
+          color: #333;
+          background-color: #fff;
+          border-color: white;
+      }
+      .w3-card, .w3-card-2 {
+    box-shadow: 0 0px 0px 0 rgba(0,0,0,0.16), 0 0px 0px 0 rgba(0,0,0,0.12);
+      }
+      #informaciontemadiscusion{
+        border: 0px;
+        -webkit-box-shadow: 0 0px 0px rgba(0,0,0,.05);
+        box-shadow: 0 0px 0px rgba(0,0,0,.05);
+      }
+      .panel{
+        border-radius: 0px;
+      }
+      table {
+          font-family: arial;
+          border-collapse: collapse;
+          width: 100%;
+          margin-top: 19px;
+          margin-bottom: 20px;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+      #tablapaginador{
+        text-align:left;
+        margin-left:34px;
+        height: 14px;
+        border: 0px solid #dddddd;
+
+      }
+      .notification {
+        color: white;
+        text-decoration: none;
+        padding: 15px 26px;
+        position: relative;
+        display: inline-block;
+        border-radius: 2px;
+      }
+
+      .notification:hover {
+        background: red;
+      }
+
+      .notification .badge {
+        position: absolute;
+        top: 3px;
+        right: -13px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background-color: red;
+        color: white;
+      }
+
+      #subcontendor{
+        z-index: 999;
+      }
+      #especial{
+        margin-top: 9px;
+        color: black !important;
+      }
+      #especial2{
+        margin: 10px 0;
+      }
+      #especialx{
+          opacity: 0.6;
+      }
+      #comentario{
+        margin-top: 200px;
+        margin-bottom: 100px;
+      }
+      .container-fluid {
+           padding-right: 0px;
+           padding-left: 0px;
+           margin-right: auto;
+           margin-left: auto;
+      }
+      #titulo {
+          padding: 0px;
+      }
+      #comentario{
+        font-size: 20px;
+      }
+      h1 {
+          font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-weight: 400;
+          margin: 10px 0;
+          font-size: 20px;
+      }
+
+    </style>
+  <body>
+    <script >
+      var editando2 = false;
+      function regLike(bttn){
+        idComentario = bttn.id.replace("like", "");
+        parametrosR = {
+          'idComentario': idComentario,
+        }
+        alert("Me ejecute");
+        $.ajax({
+          url: '../registrolike/',
+          type: 'post',
+          data: parametrosR,
+          error:function(){
+            alert("Fallo ajax");
+          },
+          success:function(data){
+            var corazon = $("#like"+idComentario).attr('id');
+            var cont = document.getElementById("contLike");
+            if(data == "True"){
+              alert("Marcar corazon y +1");
+              cont.innerHTML = parseInt(cont.innerHTML)+1;
+              $("#like"+idComentario).removeClass("glyphicon glyphicon-heart");
+              $("#like"+idComentario).addClass("glyphicon glyphicon-heart-empty");
+            }else{
+              cont.innerHTML = parseInt(cont.innerHTML)-1;
+              $("#like"+idComentario).removeClass("glyphicon glyphicon-heart-empty");
+              $("#like"+idComentario).addClass("glyphicon glyphicon-heart");
+              alert("Desmarcar corzacon y -1");
+            }
+          }
+        });
+      }
+
+    </script>
+    <nav class="navbar navbar-inverse" style=" z-index: 999;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <img src="{% static 'img\logo.png'  %}"  >
+        </div>
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+              {% if user.is_staff  %}
+              <li><a href="{% url 'foro:administradorr' %}">Panel de admin </a></li>
+              {% endif %}
+              <li><a href="{% url 'repositorio:Repositorio' %}">Repositorio </a></li>
+              <li><a href="{% url 'carto:Mapa' %}">Mapa Georeferencial</a></li>
+              <li><a href="{% url 'conversor:Conversor' %}">Conversor </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+
+              <li><a href="{% url 'foro:perfil' %}"><span class="glyphicon glyphicon-user"></span> {{ user.email }}!</a></li>
+              <li><a href="{% url 'foro:logout' %}"><span class="glyphicon">&#xe163;</span> Cerrar sesion </a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid text-left" id="subcontendor" >
+      <div class="row content" id="contendor1" >
+          <div class="container" id="contendor1">
+            <h2>Bienvenido al Foro </h2>
+            <ul class="breadcrumb">
+              <li><a href="/foro/Bienvenido">Bienvenido</a></li>
+              <li class="active">Listado de post </li>
+              {% if post %}
+                {% if categoria %}
+              <li><a href="{% url 'foro:mostrarListadoPost' post.categoria_id  %}">{{categoria.nombre}}</li></a>
+                {%endif %}
+              <li class="active">{{post.titulo}}</li>
+              {% endif %}
+            </ul>
+
+            <div class="panel panel-default" id="informaciontemadiscusion" style=" padding: 0px;">
+              <div class="panel-body" id="titulo">
+                {% if post %}
+                  <div class="col-sm-1 "align="left" >
+                    {% if post.user.imagen  %}
+                      <img src="{{post.user.imagen.url}}"  style="width:75px " alt="Avatar" class="avatar" >
+                        {%else%}
+                        <img src="{% static 'img\perfil.jpg'  %}" class="w3-bar-item w3-circle " style="width:75px">
+                    {% endif%}
+                  </div>
+                  <div class="col-sm-6"   style="margin-left: 10px;">
+                    <strong><h3> Tema: {{post.titulo}}</h3></strong>
+                    <p>Por {{post.user}}, {{post.fecha}}</p>
+                    {% if messages %}
+                    {% for message in messages %}
+                    <p{%if message.tags == "success"  %} class="alert alert-success" {%endif%}><strong>Info! </strong>{{message}}</p>
+                    {%endfor%}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-5" >
+
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            <!-- COMENTARIOS  -->
+
+              <div id="contComentarios" style="z-index=-1;">
+                <table id="tablapaginadors">
+                  <tr>
+                    <th id="tablapaginador">
+                        <ul class="pagination" >
+                          {% if comentario.has_previous %}
+                          <li><a href="?page={{ comentario.previous_page_number }}">&laquo;</a></li>
+                          {% else %}
+                          <li class="disabled"><span>&laquo;</span></li>
+                          {% endif %}
+                          {% for i in comentario.paginator.page_range %}
+                          {% if comentario.number == i %}
+                          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                          {% else %}
+                          <li><a href="?page={{ i }}">{{ i }}</a></li>
+                          {% endif %}
+                          {% endfor %}
+                          {% if comentario.has_next %}
+                          <li><a href="?page={{ comentario.next_page_number }}">&raquo;</a></li>
+                          {% else %}
+                          <li class="disabled"><span>&raquo;</span></li>
+                          {% endif %}
+                        </ul>
+                    </th>
+                  </tr>
+                </table>
+
+                <div id="testwololoo" class="panel panel-default">
+                  {% if post %}
+                      <div class="panel-heading"><!-- se ingresa nombre grupop  -->
+                        <h4 class="panel-title">Temas en discusion: {{post.titulo}}</h4>
+                      </div>
+                      <div class="w3-panel w3-card">
+                        <div class="col-sm-3" id="iz" align="center">
+                          <p>Nombre:{{post.user.nombre}} <br>Apellido:{{post.user.apellido}}</p>
+                            <p>{% if post.user.imagen  %}
+                            <img src="{{post.user.imagen.url}}"  style="width:80px " alt="Avatar" class="avatar">
+                            {%else%}
+                            <img src="{% static 'img\perfil.jpg'  %}" class="w3-bar-item w3-circle " style="width:85px">
+                            {% endif%}</p>
+                          <p>{{post.user.email}}</p>
+                            {% if post.user.admin == False %}
+                              <p>Usuario</p>
+                            {% else%}
+                              <p>Administrador</p>
+                            {%endif%}
+                        </div>
+                        <div class="col-sm-8" >
+                          <p>{{post.fecha}}</p><br>
+                          <strong>{{post.descripcion}}</strong>
+                          <hr>
+                        </div>
+                        <div class="col-sm-1" >
+                          {% if user.is_staff   or  user.is_admin %}
+                          <div class="dropdown" >
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                              <li><a href="{% url 'foro:eliminarpost' post=post.pk   %}"><button type="button" class="btn btn-danger" style="width: 94px;"> Eliminar <span class="glyphicon glyphicon-trash"></span></button></a></li>
+                              <li><a href="{% url 'foro:editarpost' post=post.id   %}"><button type="button" class="btn btn-success" style="width: 94px;"> Editar <span class="glyphicon glyphicon-edit"></span></button></a></li>
+                            </ul>
+                          </div>
+                          {% else %}
+                          <div class="dropdown" >
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                              <li><a href="{% url 'foro:eliminarpost' post=post.pk   %}"><button type="button" class="btn btn-danger" style="width: 94px;"> Eliminar <span class="glyphicon glyphicon-trash"></span></button></a></li>
+                              <li><a href="{% url 'foro:editarpost' post=post.id   %}"><button type="button" class="btn btn-success" style="width: 94px;"> Editar <span class="glyphicon glyphicon-edit"></span></button></a></li>
+                            </ul>
+                          </div>
+                          {% endif %}
+                          <br>
+                        </div>
+                      </div>
+                   {% endif %}
+                </div>
+
+                {% if comentario %}
+                {% for comentario in comentario %}
+                  <table>
+                    <tr>
+                      <th>
+                        <div id="comentario{{comentario.id}}">
+                          <div class="col-sm-3" id="iz" align="center">
+                            <p>Nombre:{{comentario.user.nombre}} <br>Apellido:{{comentario.user.apellido}}</p>
+                            <p>{% if comentario.user.imagen  %}
+                                <img src="{{comentario.user.imagen.url}}"  style="width:80px " alt="Avatar" class="avatar">
+                              {%else%}
+                              <img src="{% static 'img\perfil.jpg'  %}" class="w3-bar-item w3-circle " style="width:85px">
+                              {% endif%}</p>
+                              <p>{{comentario.user.email}}</p>
+                              {% if comentario.user.admin == False %}
+                                <p>Usuario</p>
+                                {% else%}
+                                <p>Administrador</p>
+                              {%endif%}
+                              <p>{{comentario.user.last_login}}</p>
+                            </div>
+
+                            <div class="col-sm-7" id="medio"   >
+                              <p>{{post.fecha}}</p><br>
+                              <p  class="font-weight-normal" style="margin-top: 30px;font-size: 18px;">{{comentario.get_message_as_markdown }}</p>
+                              <hr>
+                            </div>
+
+                            <div class="col-sm-2" id="de" align="right">
+                              {% if  request.user == comentario.user  or  user.is_admin or user.is_staff %}
+                              <div class="dropdown" >
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                  <li><a href="{% url 'foro:eliminarcomentario' comentario=comentario.pk   %}"><button type="button" class="btn btn-danger" style="width: 94px;"> Eliminar <span class="glyphicon glyphicon-trash"></span></button></a></li>
+                                  <li><a href="{% url 'foro:editarcomentario' pk=comentario.pk   %}"><button type="button" class="btn btn-success" style="width: 94px;">   Editar <span class="glyphicon glyphicon-edit"></span></button></a></li>
+                                </ul>
+                              </div>
+                              {% endif %}
+                              <div id="like" style="margin-top: 100px;">
+
+                                <div id="contLike" align="right">
+                                  {{ comentario.like_set.count }}
+                                </div>
+
+                                <!--   {{ comentario.user.like_set.last }}:  -->
+                                      <button class="btn btn-default botonlike" id="{{comentario.id}}" >
+                                        <span  class="glyphicon glyphicon-heart"  id="like{{comentario.id}}"  onclick="regLike(this)"></span>
+                                      </button>
+
+
+                              </div>
+
+                            </div>
+                          </div>
+                        </th>
+                      </tr>
+                    </table>
+                  {% endfor %}
+              </div>
+              {% else %}
+              <div id="comentario">
+                <h1 ><i style="font-size:34px" class="fa">&#xf0e6;</i>  Se el primero en comentar </h1>
+              </div>
+            {% endif %}
+              {% if post %}
+            <div class="alert alert-info">
+              <strong>Info!</strong><p>Como agregar imagenes</p>![Yes](https://i.imgur.com/sZlktY7.png)
+            </div>
+            <h3>Quiere agregar un nuevo comentario</h3>
+
+
+            <form method="post" action="{% url 'foro:temadiscusion' post.id%}"novalidate>
+              {% csrf_token %}
+              {{ form.as_p }}
+               <button type="submit" class="btn btn-success">Guardar</button>
+            </form>
+            <br>
+              {% endif %}
+          </div>
+
+            <!-- FIN CONTENEDOR1 -->
+      </div>
+        <!-- AQUI CIERRA -->
+
+    </div>
+    <script>
+      var simplemde = new SimpleMDE();
+    </script>
+  </body>
+  <footer class="container-fluid text-left" id="footerfin">
+    <p>Sitio website <a href="http://www.inacap.cl/tportalvp/construccion/" data-toggle="tooltip" >http://www.inacap.cl/tportalvp/construccion/</a></p>
+      © 2018 Copyright Text<br>
+  </footer>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+  <head>
+    <title>Temas de Discusion</title>
+      <link rel="shortcut icon" href="{% static 'img\tituloimg.png'  %}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/global.css'  %}"/>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <style media="screen">
+          #contendor1{
+            height: 770px
+          }
+          .sidenav {
+          padding-top: 20px;
+          background-color: #f1f1f1;
+          height: -webkit-fill-available;
+        }
+        .navbar {
+          margin-bottom: 0;
+          border-radius: 0;
+        }
+        /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+      .row.content {height: 1500px}
+
+      /* Set gray background color and 100% height */
+      .sidenav {
+        background-color: #f1f1f1;
+        height: 100%;
+      }
+
+      /* Set black background color, white text and some padding */
+      footer {
+        background-color: #555;
+        color: white;
+        padding: 15px;
+      }
+
+      /* On small screens, set height to 'auto' for sidenav and grid */
+      @media screen and (max-width: 767px) {
+        .sidenav {
+          height: 200px;
+          padding: 15px;
+        }
+        .row.content {height: auto;}
+      }
+      .nav>li>a {
+          position: relative;
+          display: block;
+          padding: 8px 16px;
+          color: #337ab7;
+      }
+              .fa-check {
+            color: green;
+        }
+
+
+      input[type=text] {
+          width: 400px;
+          box-sizing: border-box;
+          border: 2px solid #ccc;
+          border-radius: 4px;
+          font-size: 16px;
+          background-color: white;
+          background-image: url( 'img\lupa.png' );
+          background-position: 10px 10px;
+          background-repeat: no-repeat;
+          padding: 12px 20px 12px 40px;
+          -webkit-transition: width 0.4s ease-in-out;
+          transition: width 0.4s ease-in-out;
+      }
+
+      input[type=text]:focus {
+          width: 100%;
+      }
+      .fa-remove {
+        color: red;
+      }
+  </style>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+            <img src="{% static 'img\logo.png'  %}"  >
+        </div>
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="myNavbar" style="    margin-top: 10px;">
+            <ul class="nav navbar-nav">
+              <li ><a href="{% url 'foro:administradorr' %}">Panel de Administrador</a></li>
+              <li><a href="{% url 'carto:Mapa' %}">Mapa Georeferencial</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="{% url 'foro:perfil' %}"><span class="glyphicon glyphicon-user"></span> {{ user.email }}</a></li>
+              <li><a href="{% url 'foro:logout' %}"> Cerrar sesion </a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row content" id="contendor1">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-2 sidenav" style=" margin-top: 15px;margin-bottom: 30px;border-radius: 10px;font-size: 14px" >
+        <ul class="nav nav-pills nav-stacked" style="margin-top: -10px;">
+          <li class="active"><a href="{% url 'foro:visualizaradministrador' %}">Visualizar Administrador</a></li>
+          <li ><a href="{% url 'foro:visualizaruser' %}">Visualizar Usuarios</a></li>
+          <li ><a href="{% url 'foro:visualizarperfils' %}">Visualizar perfiles</a></li>
+          <li><a href="{% url 'repositorio:Repositorio' %}">Visualizar Tesis</a></li>
+          <li><a href="{% url 'repositorio:visualizarcategoriasdetesispaneladmin' %}">Visualizar Categorias de tesis  </a></li>
+        </ul>
+      </div>
+        <div class="col-sm-9 ">
+          <div class="col-sm-1">
+          </div>
+          <div class="col-sm-9 .col-center">
+          <h2>Perfiles de Administrador</h2>
+          <hr>
+          <h4><small>Informacion de los Usuarios creados </small></h4>
+          <div class="col-sm-12">
+
+            <form action="{% url 'foro:buscaradministradores'%}" method="POST" >
+              {% csrf_token %}
+              <input type="text"  name="buscalo" placeholder="Buscador por nombre">
+              <br>
+              <br>
+                <button type="submit" class="save btn btn-default" > <span class="glyphicon">&#xe003;</span> Buscar</button>
+            </form>
+            <br>
+
+            {% for obj in informacion  %}
+              <h3><strong><span class="glyphicon">&#xe003;</span>  Datos de la busqueda</strong> </h3>
+              <table class="table table-bordered" id="myTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Configuracion</th>
+                    <th scope="col">Administrador</th>
+                    <th scope="col">Perfil</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th class="dropdown">
+                      <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                        <li><a href="{% url 'foro:eliminaruser' username=obj %}"><button type="button" class="btn btn-danger" style="width: 94px;"> Eliminar <span class="glyphicon glyphicon-trash"></span></button></a></li>
+                        <li><a href="{% url 'foro:modificadouser' username=obj  %}"><button type="button" class="btn btn-success" style="width: 94px;">   Editar <span class="glyphicon glyphicon-edit"></span></button></a></li>
+                      </ul>
+                    </th>
+
+                    {% if  obj.admin == True %}
+                    <td align="center" ><i class="fa fa-check"></i></td>
+                    {% else%}
+                      <td ><i class="fa fa-remove"></i></td>
+                    {% endif  %}
+                    <td>{{obj.perfil}}</td>
+                    <td>{{obj.nombre}}</td>
+                    <td>{{obj.apellido}}</td>
+                    <td>{{obj.last_login}}</td>
+                  </tr>
+
+                </tbody>
+              </table>
+              <hr>
+            {%endfor%}
+
+            <table class="table table-bordered" id="myTable">
+              <thead>
+                <tr>
+                  <th scope="col">Configuracion</th>
+                  <th scope="col">Administrador</th>
+                  <th scope="col">Perfil</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Apellido</th>
+                  <th scope="col">fecha</th>
+                </tr>
+              </thead>
+            <tbody>
+              {% for obj in object_list%}
+              <tr>
+                <th class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li><a href="{% url 'foro:eliminaruser' username=obj %}"><button type="button" class="btn btn-danger" style="width: 94px;"> Eliminar <span class="glyphicon glyphicon-trash"></span></button></a></li>
+                      <li><a href="{% url 'foro:modificadouser' username=obj  %}"><button type="button" class="btn btn-success" style="width: 94px;">   Editar <span class="glyphicon glyphicon-edit"></span></button></a></li>
+                    </ul>
+                </th>
+
+                {% if  obj.admin == True %}
+              <td align="center" ><i class="fa fa-check"></i></td>
+              {% else%}
+                <td align="center"><i class="fa fa-remove"></i></td>
+              {% endif  %}
+                <td>{{obj.perfil}}</td>
+                <td>{{obj.nombre}}</td>
+                <td>{{obj.apellido}}</td>
+                <td>{{obj.last_login}}</td>
+              </tr>
+
+              {%endfor%}
+            </tbody>
+          </table>
+            </div>
+          </div>
+          <div class="col-sm-2">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+    </body>
+  <footer class="container-fluid text-left">
+
+  </a>
+      <br><br>
+  <p>Sitio website <a href="http://www.inacap.cl/tportalvp/construccion/" data-toggle="tooltip" >http://www.inacap.cl/tportalvp/construccion/</a></p>
+    © 2018 Copyright Text<br>
+</footer>
+</html>

@@ -1,0 +1,265 @@
+#descripcion{
+  display: block;
+  overflow:scroll;
+  height: auto;
+  max-height: 650px;
+}
+#ex{
+  top: 3px;
+  right: 3px;
+  position: absolute;
+}
+#tdEspaciador{
+  width: 5px;
+  background-color: #ddd;
+}
+#contenedorCoordenadas{
+  display: none;
+  position: absolute;
+  top: 50px;
+  text-align: center;
+}
+#txtNombreGeometry{
+  width: 150px;
+  padding: 3px 5px;
+  margin: 2px 0;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  text-align: center;
+}
+#tablaCoords{
+  width: 250px;
+  max-height: 600px;
+  overflow: auto;
+  display: block;
+  padding: 3px 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+#tablaCoords td{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+#tdLatitud{
+  width: 116px;
+}
+#tablaCoords tr:nth-child(even){background-color: #f2f2f2;}
+#tablaCoords tr:hover {background-color: #ddd;}
+#tablaCoords th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  border: 1px solid #ccc;
+  color: white;
+}
+#tablaCoordsHeader{
+  width: 100%;
+  overflow: auto;
+  padding: 3px 4px;
+  border: 1px solid #ccc;
+  border-bottom: 0px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+#tablaCoordsHeader td{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+#tTitulo{
+  width: 100%;
+}
+#centro{
+  position: absolute;
+  top: 62px;
+  right: 45%;
+  z-index: 400;
+  padding: 0px;
+  background: white;
+  text-align: center;
+  max-width: 400px;
+  display: none;
+  border-radius: 4px;
+  border: 1px solid black;
+}
+#add{
+  display: block;
+}
+.contInfo{
+  width: 250px;
+}
+.btn-custom{
+  background-color: #fff;
+  padding: 0px;
+  width: 68px;
+}
+.btn-custom2{
+  background-color: #fff;
+  padding: 0px;
+  width: 100px;
+}
+.disabled{
+  background-color: grey;
+}
+#txtNombreCapa{
+  width: 80%;
+  z-index: 65534;
+}
+
+.well{
+   width:250px;
+   padding: 8px 0;
+}
+.bttnli{
+  width: 100%;
+}
+.bttnlo{
+  width: 100%;
+}
+#data{
+  position: absolute;
+  top: 120px;
+  right: 25px;
+  background-color: red;
+  z-index: 400;
+  padding: 0px;
+  background: white;
+  color: black;
+  text-align: center;
+  width: 350px;
+  display: none;
+  background-clip: padding-box;
+  height: auto;
+  max-height: 700px;
+  font-size: 22px;
+  font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid black;
+}
+.table100.ver2 .table100-head {
+  box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.1);
+  -o-box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.1);
+  -ms-box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.1);
+}
+.cerrar{
+  font-size: 12px;
+  padding:0px;
+  float: right;
+}
+.table100.ver2 th {
+  font-family: Lato-Bold;
+  font-size: 18px;
+  color: #fa4251;
+  line-height: 1.4;
+  background-color: transparent;
+}
+.centrar{
+  display: flex;
+}
+.table100.ver2 td {
+  font-family: Lato-Regular;
+  font-size: 15px;
+  color: #808080;
+  line-height: 1.4;
+}
+
+.table100.ver2 .table100-body tr {
+  border-bottom: 1px solid #f2f2f2;
+}
+
+/*---------------------------------------------*/
+
+.table100.ver2 {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0px 40px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 0px 40px 0px rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 0px 40px 0px rgba(0, 0, 0, 0.15);
+  -o-box-shadow: 0 0px 40px 0px rgba(0, 0, 0, 0.15);
+  -ms-box-shadow: 0 0px 40px 0px rgba(0, 0, 0, 0.15);
+}
+
+.table100.ver2 .ps__rail-y {
+  right: 5px;
+}
+
+.table100.ver2 .ps__rail-y::before {
+  background-color: #ebebeb;
+}
+
+.table100.ver2 .ps__rail-y .ps__thumb-y::before {
+  background-color: #cccccc;
+}
+.column1 {
+  width: 50%;
+  text-align: center;
+}
+.column2 {
+  width: 50%;
+  text-align: center;
+}
+.row100{
+  width: 100%;
+}
+.js-pscroll {
+  position: relative;
+  overflow: hidden;
+}
+.scroll{
+  overflow: auto;
+}
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 10px olivedrab;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: yellowgreen;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7bac10;
+}
+.fix{
+  z-index: 400;
+}
+.bar{
+  background-color: #000;
+  color: white;
+  cursor: pointer;
+  height: 25px;
+}
+.sidenav {
+    height: 800px;
+    width: 0;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    background-color: #FFF;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}

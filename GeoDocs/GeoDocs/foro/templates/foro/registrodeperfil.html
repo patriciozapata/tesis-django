@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+  <head>
+    <title>Temas de Discusion</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="shortcut icon" href="{% static 'img\tituloimg.png'  %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/global.css'  %}"/>
+  </head>
+  <style media="screen">
+            #contendor1{
+              height: 770px
+            }
+            .sidenav {
+            padding-top: 20px;
+            background-color: #f1f1f1;
+            height: 100%;
+          }
+          .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+          }
+          /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+        .row.content {height: 1500px}
+
+        /* Set gray background color and 100% height */
+        .sidenav {
+          background-color: #f1f1f1;
+          height: 100%;
+        }
+
+        /* Set black background color, white text and some padding */
+        footer {
+          background-color: #555;
+          color: white;
+          padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 767px) {
+          .sidenav {
+            height: 200px;
+            padding: 15px;
+          }
+          .row.content {height: auto;}
+        }
+  </style>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+            <img src="{% static 'img\logo.png'  %}"  >
+        </div>
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+              <li><a href="{% url 'carto:Mapa' %}">Mapa Georeferencial</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="{% url 'foro:perfil' %}"><span class="glyphicon glyphicon-user"></span> {{ user.email }}</a></li>
+              <li><a href="{% url 'foro:logout' %}"> Cerrar sesion </a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row content" id="contendor1">
+
+
+        <div class="col-sm-1">
+
+        </div>
+
+          <div class="col-sm-2 sidenav" style=" margin-top: 15px;margin-bottom: 30px;border-radius: 10px;" >
+          <ul class="nav nav-pills nav-stacked">
+            <li ><a href="{% url 'foro:administradorr' %}">Panel de Administrador</a></li>
+            <li><a href="{% url 'foro:visualizarperfils' %}">Visualizar perfiles</a></li>
+            <li><a href="{% url 'repositorio:Repositorio' %}">Visualizar Tesis</a></li>
+            <li><a href="{% url 'repositorio:visualizarcategoriasdetesispaneladmin' %}">Visualizar Categorias de tesis  </a></li>
+          </ul>
+        </div>
+
+
+
+        <div class="col-sm-9">
+          <h2>Registro  de perfiles</h2>
+          <div class="col-sm-1">
+          </div>
+          <div class="table-responsive col-sm-8">
+            <h3><span class="glyphicon glyphicon-user"></span> Ingrese el perfil que desea crear </h3>
+            <form method="POST" class="post-form">
+              {% csrf_token %}
+              {{ form.as_p }}
+             <button type="submit" class="save btn btn-default" >Guardar</button>
+            </form>
+            <br>
+            <div class="col-sm-4">
+              {% if messages %}
+              {% for message in messages %}
+              <p{%if message.tags == "success"  %} class="alert alert-success" {%endif%}>{{message}}</p>
+              {%endfor%}
+            {%endif%}
+
+            </div>
+          </div>
+          <br>
+          <div class="col-sm-2">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    </body>
+  <footer class="container-fluid text-left">
+  </a>
+      <br><br>
+  <p>Sitio website <a href="http://www.inacap.cl/tportalvp/construccion/" data-toggle="tooltip" >http://www.inacap.cl/tportalvp/construccion/</a></p>
+    © 2018 Copyright Text<br>
+</footer>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% load static %}
+{% load static notifications_tags %}
+<html lang="es">
+  <head>
+    <title>Temas de Discusion</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+      <link rel="shortcut icon" href="{% static 'img\tituloimg.png'  %}">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/global.css'  %}"/>
+  </head>
+  <style media="screen">
+  #contendor1{
+    height: 840px
+  }
+  </style>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+            <img src="{% static 'img\logo.png'  %}"  >
+        </div>
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+              <li><a href="mapa.html">Mapa Georeferencial </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="{% url 'foro:perfil' %}"><span class="glyphicon glyphicon-user"></span> {{ user.email }}</a></li>
+              <li><a href="{% url 'foro:logout' %}"> Cerrar sesion </a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid text-left" id="contendor1"><!-- col de 2 sm de lado derecho  -->
+          <div class="container">
+            <div id="todaspubliaciones">
+                    {% if tipo %}
+                <div id="publicacionesportipo">
+
+                </div>
+                  <div class="col-sm-8" style="padding: inherit; margin-top: 20px;">
+                  <div style="margin-top:50px">
+                    <form method="post">
+                      {% csrf_token %}
+                      <h3>¿Desea eliminar el registro de la categoria de tesis  <strong>{{tipo.nombre}}</strong>?</h3>
+                      <hr>
+                      <h4>{{tipo.nombre}}</h4>
+
+                      <button type="submit" name="button">Si, eliminar</button>
+                      <a class="btn btn-default" href="{% url 'repositorio:visualizarcategoriasdetesispaneladmin'   %}">Cancelar</a>
+                    </form>
+                  </div>
+                </div>
+                {%endif%}
+            </div>
+
+
+
+
+        </div>
+
+</div>
+    </body>
+  <footer class="container-fluid text-left">
+  </a>
+      <br><br>
+  <p>Sitio website <a href="http://www.inacap.cl/tportalvp/construccion/" data-toggle="tooltip" >http://www.inacap.cl/tportalvp/construccion/</a></p>
+    © 2018 Copyright Text<br>
+</footer>
+</html>

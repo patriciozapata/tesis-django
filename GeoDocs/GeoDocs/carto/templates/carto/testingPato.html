@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="es">
+  <head>
+    <title>GeoMap</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- JQUERY & UI -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}"/>
+
+    <!-- ESTILO MAPA -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mapa.css' %}"/>
+
+    <script src="{% static 'dist/leaflet.js' %}"></script>
+    <script src="{% static 'js/leaflet.ajax.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'dist/leaflet.css' %}"/>
+
+    <script src="{% static 'leaflet/src/Leaflet.draw.js' %}"></script>
+    <script src="{% static 'leaflet/src/Leaflet.Draw.Event.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'leaflet/src/leaflet.draw.css' %}"/>
+
+    <script src="{% static 'leaflet/src/Toolbar.js' %}"></script>
+    <script src="{% static 'leaflet/src/Tooltip.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/ext/GeometryUtil.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/LatLngUtil.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/LineUtil.Intersect.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/Polygon.Intersect.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/Polyline.Intersect.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/TouchEvents.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/draw/DrawToolbar.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Feature.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.SimpleShape.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Polyline.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Marker.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Circle.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.CircleMarker.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Polygon.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Rectangle.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/edit/EditToolbar.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/EditToolbar.Edit.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/EditToolbar.Delete.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/Control.Draw.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Poly.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.SimpleShape.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Rectangle.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Marker.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.CircleMarker.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Circle.js' %}"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid" >
+        <div class="navbar-header">
+            <img src="{% static 'img\logo.png'  %}"  >
+        </div>
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+              {% if user.is_staff  %}
+              <li><a href="{% url 'foro:administradorr' %}">Panel de admin </a></li>
+              {% endif %}
+              <li><a href="{% url 'foro:Bienvenido' %}">Ir Foro</a></li>
+              <li><a href="{% url 'repositorio:Repositorio' %}">Repositorio </a></li>
+              <li><a href="{% url 'carto:Mapa' %}">Mapa Georeferencial</a></li>
+              <li><a href="{% url 'conversor:Conversor' %}">Conversor </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="{% url 'foro:perfil' %}"><span class="glyphicon glyphicon-user"></span> {{ user.email }}!</a></li>
+              <li><a href="{% url 'foro:logout' %}"> Cerrar sesion </a></li>
+            <li><!-- salir seccion-->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <div class="">
+
+      </div>
+      <div class="myMaps">
+        <div class="well">
+          <div style="overflow-y: scroll; overflow-x: hidden; height: 500px;">
+            <ul class="nav nav-list">
+              <li>
+                <label class="tree-toggler nav-header">Mapas</label>
+                <ul class="nav nav-list tree" id="misMapas">
+                  {% for mapa in mapas %}
+                    <li><button id="mapa{{mapa.id}}" class="bttnli">{{mapa.nombre}}</button></li>
+                  {% endfor %}
+                </ul>
+              </li>
+            </div>
+            <button onclick="nuevoMapa()" class="bttnlo">Crear nuevo mapa</button>
+        </div>
+      </div>
+    </div>
+    <div id ="main" class="container-fluid">
+      <div class="row content">
+        <div id="map" style="height: 800px; border: 1px solid #ccc"></div>
+        <!-- Centro es el formulario para guardar el nombre de la figura. -->
+        <div class="overlay" id="centro">
+          <div class="bar">
+            Registro
+          </div>
+          <form>
+            <div class="input-group">
+              <span class="input-group-addon">Nombre</span>
+              <input id="txtNombreCapa" type="text" class="form-control" placeholder="Ej: Santiago Centro">
+              <a href="#"><p onclick="storeNameGeometry()" class="glyphicon glyphicon-floppy-disk"></p></a>
+            </div>
+          </form>
+        </div>
+        <!-- Data corresponde a las coordenadas de la figura seleccionada. -->
+        <div class="overlay" id="data" scrolling="yes">
+          <div class="bar">
+            Información
+            <a href="#"><p onclick="closeInfoCoord()" class="glyphicon glyphicon-remove-circle cerrar"></p></a>
+          </div>
+          <div class="table100 ver2 m-b-110">
+          <!-- Titular de la tabla -->
+            <div class="table100-head">
+              <table id="tTitulo">
+                <thead>
+                  <tr class="row100 head">
+                    <th class="cell100 column1">Latitud</th>
+                    <th class="cell100 column2">Longitud</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          <!-- FIN Titular de la tabla -->
+          <!-- Tabla de datos (coordendas) -->
+            <div class="table100-body scroll" id="tablaCoord">
+              <table id="descripcion">
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+          $('label.tree-toggler').click(function () {
+              $(this).parent().children('ul.tree').toggle(300);
+          });
+      });
+      window.onload = function(){
+        $('.bttnli').map(function(){
+          var temp = $(this).attr('id');
+          var bttn = document.getElementById(temp);
+          bttn.onclick = function(){
+            seleccionarMapa(bttn);
+          }
+        });
+      }
+      var mapaSeleccionado = document.createElement("input");
+      var menuOpen = false;
+      var registrando = false;
+      var eliminando = false;
+      var editando = false;
+      var mostrandoCoords = false;
+      var geometry = null;
+      var tempLayer = null;
+      var nombreCapa = null;
+      var geometrySelectedShowCoords = null;
+      var storeIdPoint = null;
+      var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          osm = L.tileLayer(osmUrl, { maxZoom: 18, attribution: osmAttrib }),
+          map = new L.Map('map', { center: new L.LatLng(10.505, -90.04), zoom: 3 }),
+          allFeatures = L.featureGroup().addTo(map);
+          poligonos = L.featureGroup().addTo(map);
+          puntos = L.featureGroup().addTo(map);
+          lineas = L.featureGroup().addTo(map);
+      var MapControlLayer = L.control.layers(
+        {
+          'osm': osm.addTo(map),
+          "google": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {attribution: 'google'}),
+          "TopoMap": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {	attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'}),
+          "Esri": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'})
+        },
+        {
+          'Poligonos': poligonos,
+          'Lineas': lineas,
+          'Puntos': puntos
+        },
+        {
+          position: 'topleft',
+          collapsed: false
+        }
+      );
+      var MapControlDraw = new L.Control.Draw(
+        {
+          edit: false,
+          draw: {
+            polygon: {
+              allowIntersection: false,
+              showArea: true
+            },
+            circle: false,
+            circlemarker: false,
+          }
+        }
+      );
+      /* Agregar nueva geomatria y camcelar creacion de geometia */
+      var customAddGeometry =  L.Control.extend({
+        options: {
+          position: 'topleft'
+        },
+        onAdd: function (map) {
+          var contenedor = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded leaflet-control');
+          var espacio = L.DomUtil.create('div', 'leaflet-control-layers-separator');
+          var nuevo = L.DomUtil.create('button', 'btn btn-custom');
+          var cancelar = L.DomUtil.create('button', 'btn btn-custom');
+          contenedor.id="contenedorNuevaGeometry";
+          nuevo.id="add";
+          nuevo.title="Agregar nuevo elemento";
+          nuevo.innerHTML = "Nuevo";
+          cancelar.id="cancel";
+          cancelar.title="Cancelar creación";
+          cancelar.innerHTML = "Cancelar";
+          nuevo.onclick = function(){
+            if(eliminando == false){
+              if(editando == false){
+                if(registrando == false){
+                  contenedor.appendChild(espacio);
+                  contenedor.appendChild(cancelar);
+                  iniciarRegGeomtry(this);
+                }else{
+                  /*Ya no se esta registrando debido a que se genero la figura.*/
+                  /*El boton "Guardar" esta habilitado.*/
+                  regGeomtry();
+                }
+              }else{
+                alert("Guarda los cambios antes de continuar.");
+              }
+            }else{
+              alert("Finaliza o cancela la eliminación de figuras antes de continuar.");
+            }
+          }
+          cancelar.onclick = function(){
+            $("#centro").hide("blind" ,1000,function(){
+              var limpiar = document.getElementById("txtNombreCapa");
+              limpiar.readOnly = false;
+              limpiar.value = "";
+            });
+            registrando = false;
+            nombreCapa = null;
+            nuevo.innerHTML = "Nuevo";
+            nuevo.className = nuevo.className.replace(" disabled", "");
+            contenedor.removeChild(espacio);
+            contenedor.removeChild(cancelar);
+            if(tempLayer != null){
+              drawnItems.removeLayer(tempLayer);
+              tempLayer = null;
+            }
+            map.addControl(editor);
+          }
+          contenedor.appendChild(nuevo);
+          return contenedor;
+        }
+      });
+      var mapAddGeometry = new customAddGeometry();
+      var customMenu =  L.Control.extend({
+        options: {
+          position: 'topleft'
+        },
+        onAdd: function (map) {
+          var customControl = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded leaflet-control');
+          var menu = L.DomUtil.create('div', 'btn btn-custom');
+          menu.id="customMenu";
+          menu.title="Agregar nuevo elemento";
+          menu.innerHTML = "Menu";
+          menu.onclick = function(){
+            if(menuOpen == true){
+              closeNav();
+            }else{
+              openNav();
+            }
+          }
+          customControl.appendChild(menu);
+          return customControl;
+        }
+      });
+      var customInfoMap =  L.Control.extend({
+        options: {
+          position: 'topright'
+        },
+        onAdd: function (map) {
+          var contenedorInfoMapa = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded leaflet-control');
+          var editar = L.DomUtil.create('button', 'btn btn-custom');
+          editar.innerHTML = "Editar";
+          var eliminar = L.DomUtil.create('button', 'btn btn-custom');
+          eliminar.innerHTML = "eliminar";
+          contenedorInfoMapa.appendChild(mapaSeleccionado);
+          contenedorInfoMapa.appendChild(editar);
+          contenedorInfoMapa.appendChild(eliminar);
+          editar.onclick = function(){
+            if(mapaSeleccionado.value != "null"){
+              antiguoNombre = document.getElementById("mapa"+mapaSeleccionado.getAttribute("idmapa")).innerHTML;
+              if(antiguoNombre != mapaSeleccionado.value){
+                updateNombreMapa(mapaSeleccionado.getAttribute("idmapa"), mapaSeleccionado.value);
+              }
+            }else{
+              alert("El nombre de su mapa no puede estar vacio");
+            }
+          }
+          eliminar.onclick = function(){
+            if(confirm("¿Esta seguro que desea eliminar el mapa junto con las geometrias generadas en el?")){
+              parametrosR = {
+                'idMapa': mapaSeleccionado.getAttribute("idmapa")
+              }
+              $.ajax({
+                url: 'eliminarMapa',
+                type: 'post',
+                data: parametrosR,
+                error: function(){
+                  alert("Ocurrio un error, vuelva a intentarlo mas tarde");
+                },
+                success: function(data){
+                  var quitarSeleccionMapa = document.getElementById("mapa"+mapaSeleccionado.getAttribute("idmapa"));
+                  quitarSeleccionMapa.parentNode.remove();
+                  mapaSeleccionado = document.createElement("input");
+                  limpiarMapa();
+                  alert(data);
+                }
+              });
+            }
+          }
+          return contenedorInfoMapa;
+        }
+      });
+      var mapInfoMap = new customInfoMap();
+      var customShowCoords =  L.Control.extend({
+        options: {
+          position: 'topright'
+        },
+        onAdd: function (map) {
+          var contenedorCoordenadas = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded leaflet-control');
+          var contInfo = L.DomUtil.create('div', 'contInfo');
+          contInfo.innerHTML="Información de Geometria";
+          contenedorCoordenadas.id = "contenedorCoordenadas";
+          var header = document.createElement("table");
+          header.id = "tablaCoordsHeader"
+          var table = document.createElement("table");
+          table.id = "tablaCoords"
+          var tr = document.createElement("tr");
+          var titulos = document.createElement("tr");
+          var thead = document.createElement("thead");
+          var tdLatitud = document.createElement("td");
+          tdLatitud.innerHTML = "Latitud";
+          tdLatitud.id = "tdLatitud";
+          var tdLongitud = document.createElement("td");
+          tdLongitud.innerHTML = "Longitud";
+          var tdEspaciador = document.createElement("td");
+          tdEspaciador.id = "tdEspaciador";
+          var cerrar = document.createElement("span");
+          cerrar.id = "ex";
+          cerrar.className = "glyphicon glyphicon-remove-circle cerrar";
+          cerrar.onclick = function(){
+            closeInfoCoordTest();
+          }
+          var txtNombreGeometry = document.createElement("input");
+          txtNombreGeometry.id = "txtNombreGeometry";
+          txtNombreGeometry.readOnly = true;
+          var rename = L.DomUtil.create('button', 'btn btn-custom2');
+          rename.id = "rename";
+          rename.innerHTML = "Renombrar";
+          contInfo.appendChild(txtNombreGeometry);
+          contInfo.appendChild(rename);
+          contInfo.appendChild(cerrar);
+          titulos.appendChild(tdLatitud);
+          titulos.appendChild(tdLongitud);
+          titulos.appendChild(tdEspaciador);
+          thead.appendChild(titulos);
+          header.appendChild(thead);
+          contenedorCoordenadas.appendChild(contInfo);
+          contenedorCoordenadas.appendChild(header);
+          contenedorCoordenadas.appendChild(table);
+          rename.onclick = function(){
+            if(rename.innerHTML == "Renombrar"){
+              txtNombreGeometry.readOnly = false;
+              rename.innerHTML = "guardar";
+            }else{
+              renombrarGeometria();
+            }
+          }
+          return contenedorCoordenadas;
+        }
+      });
+      var mapShowCoords = new customShowCoords();
+      var editor = new L.Control.Draw(
+        {
+          edit: {
+            featureGroup: allFeatures,
+            poly: {
+              allowIntersection: false
+            }
+          },
+          draw: false
+        }
+      );
+      map.addControl(new customMenu());
+      map.addControl(MapControlLayer);
+      map.on(L.Draw.Event.CREATED, function (event) {
+          var layer = event.layer;
+          allFeatures.addLayer(layer);
+          layer = layer.toGeoJSON();
+          geometry = layer.geometry;
+          var nameLayer = document.getElementById("txtNombreCapa").value;
+          var bttn = document.getElementById("add");
+          bttn.className = bttn.className.replace(" disabled", "");
+          map.removeControl(MapControlDraw);
+      });
+      map.on('draw:deleted', function(e){
+        e.layers.eachLayer(function(layer){
+          layer = layer.toGeoJSON();
+          var parametrosR = {
+            idLayer: layer.properties.pk,
+            tipo: layer.geometry.type
+          };
+          $.ajax({
+            url: 'eliminar',
+            type: 'post',
+            data: parametrosR,
+            error: function(){
+              alert("Ocurrio un error al eliminar la capa.");
+            },
+            success: function(data){
+              alert(data);
+            }
+          });
+        });
+      });
+      map.on('draw:deletestart', function(){
+        closeInfoCoordTest();
+        eliminando = true;
+      });
+      map.on('draw:deletestop', function(){
+        eliminando = false;
+      });
+      map.on('draw:editstart', function(){
+        closeInfoCoordTest();
+        editando = true;
+      });
+      map.on('draw:editstop', function(){
+        editando = false;
+      });
+      map.on('draw:edited', function (e) {
+        var fg = [];
+        var layers = e.layers.toGeoJSON();
+        var features = layers.features;
+        features.forEach(function(feature) {
+          var temp={'id': feature.properties.pk, 'type': feature.geometry.type, 'nombre':feature.properties.name, 'geom': feature.geometry};
+          fg.push(temp);
+        })
+        var parametrosR = {
+          datos: JSON.stringify(fg),
+        };
+        $.ajax({
+          url: 'actualizar',
+          type: 'post',
+          data: parametrosR,
+          error: function(){
+            alert("Ocurrio un error en la Modificación.");
+          },
+          success: function(data){
+            editando = false;
+            cargaLayers();
+          }
+        });
+      });
+      function renombrarGeometria(){
+        txtNombreGeometry = document.getElementById("txtNombreGeometry");
+        if(txtNombreGeometry.value != ""){
+          var parametrosR = {
+            'idGeometria': txtNombreGeometry.getAttribute("idgeometria"),
+            'nombre': txtNombreGeometry.value,
+            'tipo': txtNombreGeometry.getAttribute("tipo")
+          }
+          $.ajax({
+            url: 'updateNG',
+            type: 'post',
+            data: parametrosR,
+            error: function(){
+              alert("Ocurrio un error, vuelva a intentarlo mas tarde");
+            },
+            success: function(data){
+              cargaLayers();
+              if(data!=null){
+                txtNombreGeometry.readOnly = true;
+                var rename = document.getElementById("rename");
+                rename.innerHTML = "Renombrar";
+                alert(data);
+              }
+            }
+          });
+        }else{
+          alert("Debes ingresar un nombre");
+        }
+
+      }
+      function limpiarMapa(){
+        map.removeControl(editor);
+        map.removeControl(mapAddGeometry);
+        map.removeControl(mapInfoMap);
+        puntos.clearLayers();
+        lineas.clearLayers();
+        poligonos.clearLayers();
+      }
+      function seleccionarMapa(bttn){
+        if(registrando == false){
+          if(eliminando == false){
+            if(editando == false){
+              idMapa = bttn.id.replace("mapa", "");
+              selected = mapaSeleccionado.getAttribute('idMapa');
+              if(selected == null){
+                map.addControl(mapAddGeometry);
+                map.addControl(mapInfoMap);
+                map.addControl(editor);
+                mapaSeleccionado.setAttribute("idMapa", idMapa);
+                mapaSeleccionado.value=bttn.innerHTML;
+                cargaLayers();
+              }else{
+                mapaSeleccionado.setAttribute("idMapa", idMapa);
+                mapaSeleccionado.value=bttn.innerHTML;
+                if(selected != idMapa){
+                  cargaLayers();
+                  closeInfoCoordTest();
+                }
+              }
+            }else{
+              alert("Finelize la edición.");
+            }
+          }else{
+            alert("Guarde los cambios antes de cambiar el mapa.");
+          }
+        }else{
+          alert("Finalize el registro.");
+        }
+      }
+      function nuevoMapa(){
+        if(registrando == false && eliminando == false && editando == false){
+          if(document.getElementById("misMapas").childElementCount <= 15){
+            parametrosR = {
+              'nombre': "Mapa vacío"
+            }
+            $.ajax({
+              url: 'nuevoMapa',
+              type: 'post',
+              data: parametrosR,
+              error: function(){
+                alert("Ocurrio un error, vuelva a intentarlo mas tarde");
+              },
+              success: function(data){
+                if(data!=null){
+                  ul = document.getElementById("misMapas");
+                  li = document.createElement("li");
+                  bttn = document.createElement("button");
+                  bttn.id= "mapa"+data;
+                  bttn.innerHTML = "Mapa vacío";
+                  bttn.className = "bttnli";
+                  bttn.onclick = function(){
+                    seleccionarMapa(bttn);
+                  }
+                  ul.appendChild(li);
+                  li.appendChild(bttn);
+                }
+              }
+            });
+          }else{
+            alert("Superaste el máximo de mapas que puedes crear");
+          }
+        }else{
+          alert("Finalize su actividad en otros proyectos.");
+        }
+      }
+      function updateNombreMapa(idMapa, nuevoNombre){
+        var parametrosR = {
+          'idMapa': idMapa,
+          'nuevoNombre': nuevoNombre
+        }
+        $.ajax({
+          url: 'updateNP',
+          type: 'post',
+          data: parametrosR,
+          error: function(){
+            alert("Ocurrio un error, vuelva a intentarlo mas tarde");
+          },
+          success: function(data){
+            if(data!=null){
+              bttn = document.getElementById("mapa".concat(idMapa));
+              bttn.innerHTML = nuevoNombre;
+            }
+          }
+        });
+      }
+      function showCoords(coords) {
+        if(eliminando == false){
+          var data = document.getElementById("data");
+          var lstCoord = coords.toString().split(",");
+          if(data.style.display != "none"){
+            $("#data").hide("drop",{direction:'right'} ,1000,function(){
+              $("#descripcion").empty();
+              poblarTabla(lstCoord);
+              $("#data").show("drop",{direction: 'right'} ,1000);
+            });
+          }else{
+            poblarTabla(lstCoord);
+            $("#data").show("drop",{direction: 'right'} ,1000);
+          }
+        }
+      };
+      function showCoordsTest(geometry, properties) {
+        if(eliminando == false){
+          if(mostrandoCoords == false){
+            map.addControl(mapShowCoords);
+            mostrandoCoords = true;
+          }
+          var data = document.getElementById("contenedorCoordenadas");
+          var lstCoord = geometry.coordinates.toString().split(",");
+          if(data.style.display != "none"){
+            $("#contenedorCoordenadas").hide("drop",{direction:'right'} ,1000,function(){
+              $("#tablaCoords").empty();
+              var nombre = document.getElementById("txtNombreGeometry");
+              nombre.value = properties.nombre;
+              nombre.setAttribute("idgeometria", properties.pk);
+              nombre.setAttribute("tipo", geometry.type);
+              poblarTablaTest(lstCoord);
+              $("#contenedorCoordenadas").show("drop",{direction: 'right'} ,1000);
+            });
+          }else{
+            poblarTablaTest(lstCoord);
+            $("#contenedorCoordenadas").show("drop",{direction: 'right'} ,1000);
+          }
+        }
+      };
+      function closeInfoCoord(){
+        $("#data").hide("drop",{direction:'right'} ,1000,function(){
+          $("#descripcion").empty();
+        });
+      }
+      function closeInfoCoordTest(){
+        $("#contenedorCoordenadas").hide("drop",{direction:'right'} ,1000,function(){
+          $("#tablaCoords").empty();
+        });
+        geometrySelectedShowCoords = null;
+      }
+      function poblarTabla(lstCoord){
+        var tablaCoord = document.getElementById("descripcion");
+        lstCoord.forEach(function(coord, index){
+          if(index % 2){
+            var td = document.createElement("td");
+            td.setAttribute("class", "column2");
+            tr = tablaCoord.rows[tablaCoord.rows.length-1];
+            tr.setAttribute("class", "centrar");
+            td.innerHTML = coord;
+            tr.appendChild(td);
+          }else{
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.setAttribute("class", "column1");
+            tr.appendChild(td);
+            tablaCoord.appendChild(tr);
+            td.innerHTML = coord;
+          }
+        });
+      }
+      function poblarTablaTest(lstCoord){
+        var tablaCoord = document.getElementById("tablaCoords");
+        lstCoord.forEach(function(coord, index){
+          if(index % 2){
+            var td = document.createElement("td");
+            td.setAttribute("class", "column2");
+            tr = tablaCoord.rows[tablaCoord.rows.length-1];
+            tr.setAttribute("class", "centrar");
+            td.innerHTML = coord;
+            tr.appendChild(td);
+          }else{
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.setAttribute("class", "column1");
+            tr.appendChild(td);
+            tablaCoord.appendChild(tr);
+            td.innerHTML = coord;
+          }
+        });
+      }
+      function cargaLayers(){
+        allFeatures.clearLayers();
+        cargaPuntos(map);
+        cargaLineas(map);
+        cargaPoligonos(map);
+      };
+      function cargaPuntos(map){
+        puntos.clearLayers();
+        var datasets = new L.GeoJSON.AJAX("{% url 'carto:Puntos' 9999 %}".replace(/9999/, mapaSeleccionado.getAttribute("idMapa")), {
+          onEachFeature: function(feature, layer){
+            puntos.addLayer(layer);
+            allFeatures.addLayer(layer);
+            layer.bindPopup(feature.properties.nombre);
+            layer.on("click", function(e){
+              if(geometrySelectedShowCoords != feature.geometry){
+                geometrySelectedShowCoords = feature.geometry;
+                showCoordsTest(feature.geometry, feature.properties);
+              }
+            });
+          }
+        });
+      };
+      function cargaPoligonos(map){
+        poligonos.clearLayers();
+        var datasets = new L.GeoJSON.AJAX("{% url 'carto:Poligonos' 9999 %}".replace(/9999/, mapaSeleccionado.getAttribute("idMapa")), {
+          onEachFeature: function(feature, layer){
+            poligonos.addLayer(layer);
+            allFeatures.addLayer(layer);
+            layer.on("click", function(e){
+              if(geometrySelectedShowCoords != feature.geometry){
+                geometrySelectedShowCoords = feature.geometry;
+                showCoordsTest(feature.geometry, feature.properties);
+              }
+            });
+          }
+        });
+      };
+      function cargaLineas(map){
+        lineas.clearLayers();
+        var datasets = new L.GeoJSON.AJAX("{% url 'carto:Lineas' 9999 %}".replace(/9999/, mapaSeleccionado.getAttribute("idMapa")), {
+          onEachFeature: function(feature, layer){
+            lineas.addLayer(layer);
+            allFeatures.addLayer(layer);
+            layer.on("click", function(e){
+              if(geometrySelectedShowCoords != feature.properties.pk){
+                geometrySelectedShowCoords = feature.properties.pk;
+                showCoordsTest(feature.geometry, feature.properties);
+              }
+            });
+          }
+        });
+      };
+      function cargaLayersTest(map){
+        drawnItems.clearLayers();
+        var datasets = new L.GeoJSON.AJAX("{% url 'carto:DataAll' 9999 %}".replace(/9999/, mapaSeleccionado.getAttribute("idMapa")), {
+          onEachFeature: function(feature, layer){
+            drawnItems.addLayer(layer);
+            allFeatures.addLayer(layer);
+            layer.bindPopup(feature.properties.nombre).bringToFront();
+            layer.on("click", function(e){
+              if(geometrySelectedShowCoords != feature.properties.pk){
+                geometrySelectedShowCoords = feature.properties.pk;
+                showCoords(feature.geometry.coordinates);
+              }
+            });
+          },
+          pointToLayer: function (feature, latlng) {
+            var geojsonFeature = {
+                "type": "Feature",
+                "properties": {
+                    "name": "Coors Field",
+                    "amenity": "Baseball Stadium",
+                    "popupContent": "This is where the Rockies play!"
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-104.99404, 39.75621]
+                }
+            };
+            var test2 = {
+              "type": "Feature",
+              "properties": {
+                "nombre": "huehue",
+                "mapa": 1, "pk": "2"
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [-97.03125, 0.527336]
+              }
+            };
+            L.geoJSON(test2, {
+                onEachFeature: function(feature, layer){
+                  alert("espera");
+                  puntos.addLayer(layer);
+                  allFeatures.addLayer(layer);
+                  alert("espera2");
+                }
+            });
+            var marker = L.marker(latlng);
+            puntos.addLayer(marker);
+            allFeatures.addLayer(marker);
+            marker.bindPopup(feature.properties.nombre);
+            marker.on("click", function(){
+              showCoords(feature.geometry.coordinates);
+            });
+            marker.on("drag", function(){
+              storeIdPoint = feature.properties.pk;
+            })
+          }
+        });
+      }
+      function iniciarRegGeomtry(e){
+        registrando = true;
+        map.removeControl(editor);
+        e.innerHTML = "Guardar";
+        e.className = e.className+" disabled";
+        e.title="Registre una figura para guardar.";
+        $("#centro").show("blind",1000);
+      }
+      function storeNameGeometry(){
+        nombreCapa = document.getElementById("txtNombreCapa");
+        if(nombreCapa.value != ""){
+          nombreCapa.readOnly = true;
+          map.addControl(MapControlDraw);
+        }else{
+          alert("Ingrese un nombre para identificar la geomatria");
+        }
+      }
+      function regGeomtry(){
+        if(geometry != null){
+          var parametrosR = {
+            nombre: nombreCapa.value,
+            coordenadas: JSON.stringify(geometry),
+            tipo: geometry.type,
+            idMapa: mapaSeleccionado.getAttribute("idMapa"),
+          };
+          $.ajax({
+            url: 'insertar',
+            type: 'post',
+            data: parametrosR,
+            error: function(){
+              alert("Ocurrio un error al guardar la capa.");
+            },
+            success: function(data){
+              alert("Se registro con exito");
+              registrando = false;
+              $("#centro").hide("blind" ,1000,function(){
+                var limpiar = document.getElementById("txtNombreCapa");
+                limpiar.readOnly = false;
+                limpiar.value = "";
+              });
+              var contenedor = document.getElementById("contenedorNuevaGeometry");
+              contenedor.removeChild(contenedor.childNodes[2]);
+              contenedor.removeChild(contenedor.childNodes[1]);
+              contenedor.childNodes[0].innerHTML = "Nuevo";
+              map.addControl(editor);
+              cargaLayers();
+            }
+          });
+        }else{
+          alert("Debes generar un figura.");
+        }
+      }
+      function openNav() {
+        menuOpen = true;
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
+      }
+      function closeNav() {
+        menuOpen = false;
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft= "0";
+      }
+    </script>
+  </body>
+  <footer class="container-fluid">
+    </a><p>
+    Sitio website <a href="http://www.inacap.cl/tportalvp/construccion/" data-toggle="tooltip" >http://www.inacap.cl/tportalvp/construccion/
+    </a></p>
+      © 2018 Copyright Text<br>
+  </footer>
+</html>

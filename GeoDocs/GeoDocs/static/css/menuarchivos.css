@@ -1,0 +1,187 @@
+
+.row.content {height: auto;}
+
+
+.sidenav {
+  background-color: #f1f1f1;
+  height: 100%;
+}
+
+
+footer {
+  background-color: #555;
+  color: white;
+  padding: 15px;
+}
+
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.navbar-inverse {
+    background: #CA1819;
+    color: #CA1819;
+}
+
+@media screen and (max-width: 767px) {
+  .sidenav {
+    height: auto;
+    padding: 15px;
+  }
+  .row.content {height: auto;}
+}
+/* Container holding the image and the text */
+.container {
+    position: relative;
+
+}
+
+/* Bottom right text */
+.text-block {
+    position: absolute;
+    bottom: 20px;
+    right: 130px;
+    background-color: black;
+    color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.navbar {
+    font-family: Montserrat, sans-serif;
+    margin-bottom: 0;
+    background-color: #9E9D99;
+    border: 0;
+    letter-spacing: 4px;
+    font-size: 16px;
+    opacity: 0.9;
+}
+.navbar-inverse {
+    background: #CA1819;
+    color: #CA1819;
+}
+.navbar-inverse .navbar-brand {
+    border-color:: #2D2D30;
+}
+.navbar-inverse .navbar-nav>li>a {
+    color: #ffffff;
+    border-color: #CA1819;
+}
+
+
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color:#ffffff;
+font-size: 16px;
+    margin-bottom: 0;
+
+    border: 0;
+
+    letter-spacing: 4px;
+    opacity: 0.9;
+}
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+    color: #ffffff;
+    background-color: #CA1819;
+    border-color: #CA1819;
+    font-size: 16px;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    color: #ffffff;
+    background-color: #9E9D99;
+    font-size: 16px;
+}
+.navbar-inverse .navbar-brand {
+    color:#ffffff;
+    font-size: 16px;
+}
+
+
+
+
+.dios {
+  border: 2px solid #ccc;
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 16px;
+  margin: 16px 0
+}
+
+.dios::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.dios img {
+  float: left;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.dios span {
+  font-size: 20px;
+  margin-right: 15px;
+}
+
+@media (max-width: 500px) {
+  .dios {
+      text-align: center;
+  }
+  .dios img {
+      margin: auto;
+      float: none;
+      display: block;
+  }
+}
+
+
+@media (min-width: 768px)
+.navbar {
+   border-radius: 0px; 
+}
+@media (min-width: 768px)
+.navbar {
+     border-radius: 0px;
+}
+
+
+.collapsible {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+}
+
+
+
+.collapsible:after {
+    content: '\002B';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+
+
+.contenido {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+}

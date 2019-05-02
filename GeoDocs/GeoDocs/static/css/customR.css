@@ -1,0 +1,13 @@
+.ttf{
+  height: 52px;
+}
+#tablall{
+  display: none;
+}
+#gis{
+  width:80%;
+  height: 700px;
+}
+#dios{
+  background-color: blue;
+}

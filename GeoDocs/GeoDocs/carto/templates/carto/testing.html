@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load leaflet_tags %}
+<html>
+<head>
+  {% leaflet_js %}
+    <title>Leaflet.draw vector editing handlers</title>
+    <!-- JQUERY & UI -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    
+    <!-- ESTILO MAPA -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mapa.css' %}"/>
+
+    <script src="{% static 'dist/leaflet.js' %}"></script>
+    <script src="{% static 'js/leaflet.ajax.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'dist/leaflet.css' %}"/>
+
+    <script src="{% static 'leaflet/src/Leaflet.draw.js' %}"></script>
+    <script src="{% static 'leaflet/src/Leaflet.Draw.Event.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'leaflet/src/leaflet.draw.css' %}"/>
+
+    <script src="{% static 'leaflet/src/Toolbar.js' %}"></script>
+    <script src="{% static 'leaflet/src/Tooltip.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/ext/GeometryUtil.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/LatLngUtil.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/LineUtil.Intersect.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/Polygon.Intersect.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/Polyline.Intersect.js' %}"></script>
+    <script src="{% static 'leaflet/src/ext/TouchEvents.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/draw/DrawToolbar.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Feature.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.SimpleShape.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Polyline.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Marker.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Circle.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.CircleMarker.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Polygon.js' %}"></script>
+    <script src="{% static 'leaflet/src/draw/handler/Draw.Rectangle.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/edit/EditToolbar.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/EditToolbar.Edit.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/EditToolbar.Delete.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/Control.Draw.js' %}"></script>
+
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Poly.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.SimpleShape.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Rectangle.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Marker.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.CircleMarker.js' %}"></script>
+    <script src="{% static 'leaflet/src/edit/handler/Edit.Circle.js' %}"></script>
+</head>
+<body>
+  <div class="toggler">
+    <div id="map" style="width: 800px; height: 600px; border: 1px solid #ccc"></div>
+    <div class="Crear" id="create">
+
+    </div>
+  </div>
+<script>
+    var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            osm = L.tileLayer(osmUrl, { maxZoom: 18, attribution: osmAttrib }),
+            map = new L.Map('map', { center: new L.LatLng(10.505, -90.04), zoom: 3 }),
+            drawnItems = L.featureGroup().addTo(map);
+    L.control.layers(
+      {
+        'osm': osm.addTo(map),
+        "google": L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {attribution: 'google'})
+      },
+      {'drawlayer': drawnItems},
+      {
+        position: 'topleft',
+        collapsed: false
+      }
+    ).addTo(map);
+    var MapControlDraw = new L.Control.Draw(
+      {
+        edit: {
+          featureGroup: drawnItems,
+          poly: {
+            allowIntersection: false
+          }
+        },
+        draw: {
+          polygon: {
+            allowIntersection: false,
+            showArea: true
+          }
+        }
+      }
+    );
+    map.addControl(MapControlDraw);
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
+    });
+    $( "#create" ).hide();
+    function callback() {
+      setTimeout(function() {
+        $( "#create:visible" ).removeAttr( "style" ).fadeOut();
+      }, 1000 );
+    };
+    map.on('draw:drawstart', function() {
+      var elemento = document.getElementById("create");
+      alert(elemento.style.display);
+      if(elemento.style.display != "none"){
+        alert("No es none");
+      }else{
+        alert("Ahora es none");
+      }
+      $("#create").show("slide", 1000);
+    });
+    map.on('draw:edited', function (e) {
+      var fg = [];
+      var layers = e.layers.toGeoJSON();
+      var features = layers.features;
+      features.forEach(function ejecuta(feature) {
+        var temp={'id': feature.properties.pk, 'nombre':feature.properties.name, 'geom': feature.geometry};
+        fg.push(temp);
+      })
+      var parametrosR = {
+        datos: JSON.stringify(fg),
+      };
+      $.ajax({
+        url: 'actualizar',
+        type: 'post',
+        data: parametrosR,
+        error: function(){
+          alert("Ocurrio un error en la Modificación.");
+        },
+        success: function(data){
+          alert(data);
+        }
+      });
+    });
+    function cargaLayers(map, options){
+      var datasets = new L.GeoJSON.AJAX("{% url 'carto:Data2' %}", {
+        onEachFeature: function(feature, layer){
+          drawnItems.addLayer(layer);
+        }
+      });
+    }
+    cargaLayers(map);
+</script>
+</body>
+</html>

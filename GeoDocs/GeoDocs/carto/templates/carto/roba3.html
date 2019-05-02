@@ -1,0 +1,111 @@
+{% load leaflet_tags %}
+{% load staticfiles %}
+<html>
+<head>
+  {% leaflet_js %}
+  <meta charset=utf-8 />
+  <title>Carto</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <!-- Load Leaflet (not latest version due to dependencies) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <script src="{% static 'js/leaflet.js' %}"></script>
+    <script src="{% static 'js/leaflet.ajax.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"
+    integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
+    crossorigin=""></script>
+    <!-- Leaflet Draw -->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@0.4.7/dist/leaflet.draw-src.css">
+
+
+  <style>
+    body { margin:0; padding:0; }
+    #map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  </style>
+</head>
+<body>
+
+<style>
+  #info-pane {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 400;
+    padding: 1em;
+    background: white;
+    text-align: right;
+  }
+  #form {
+    display: none;
+  }
+</style>
+
+<div id='map'></div>
+<script>
+  function cargaLayers(map, options){
+    var datasets = new L.GeoJSON.AJAX("{% url 'carto:Data' %}", {
+      onEachFeature: function(feature, layer){
+        layer.bindPopup(feature.properties.name.toString());
+        editableLayers.addLayer(layer);
+      }
+    });
+    datasets.addTo(map);
+  }
+
+  // Create the map
+  var map = L.map('map').setView([-33.8650, -60.2094], 3);
+  // Set up the OSM layer
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Data © <a href="http://osm.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18
+    }).addTo(map);
+  // Initialise the FeatureGroup to store editable layers
+  var editableLayers = new L.FeatureGroup();
+  map.addLayer(editableLayers);
+  var drawPluginOptions = {
+    position: 'topleft',
+    draw: {
+      polygon: {
+        allowIntersection: true, // Restricts shapes to simple polygons
+        drawError: {
+          color: '#e1e100', // Color the shape will turn when intersects
+          message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+        },
+        shapeOptions: {
+          color: '#97009c'
+        }
+      },
+      // disable toolbar item by setting it to false
+      polyline: false,
+      circle: false, // Turns off this drawing tool
+      rectangle: false,
+      marker: false,
+      },
+    edit: {
+      featureGroup: editableLayers, //REQUIRED!!
+      edit: true,
+      remove: true
+    }
+  };
+  // Initialise the draw control and pass it the FeatureGroup of editable layers
+  var drawControl = new L.Control.Draw(drawPluginOptions);
+  map.addControl(drawControl);
+  map.on('draw:created', function(e) {
+    var type = e.layerType,
+      layer = e.layer;
+    if (type === 'marker') {
+      layer.bindPopup('A popup!');
+    }
+    editableLayers.addLayer(layer);
+  });
+  map.on('draw:deleted', function(e) {
+  });
+  cargaLayers(map);
+</script>
+
+</body>
+</html>
